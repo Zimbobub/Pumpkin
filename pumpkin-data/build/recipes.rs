@@ -28,7 +28,7 @@ pub enum RecipeTypes {
     #[serde(rename = "minecraft:smoking")]
     Smoking(CookingRecipeStruct),
     #[serde(rename = "minecraft:stonecutting")]
-    Stonecutting,
+    Stonecutting(StonecuttingRecipeStruct),
     #[serde(other)]
     #[serde(rename = "minecraft:crafting_special_*")]
     CraftingSpecial,
@@ -263,6 +263,28 @@ impl ToTokens for RecipeIngredientTypes {
     }
 }
 
+
+#[derive(Deserialize)]
+pub struct StonecuttingRecipeStruct {
+    ingredient: RecipeIngredientTypes,
+    result: RecipeResultStruct,
+}
+
+impl ToTokens for StonecuttingRecipeStruct {
+    fn to_tokens(&self, tokens: &mut TokenStream) {
+        let ingredient = self.ingredient.to_token_stream();
+        let result = self.result.to_token_stream();
+
+        tokens.extend(quote! {
+            StonecuttingRecipe {
+                ingredient: #ingredient,
+                result: #result,
+            }
+        });
+    }
+}
+
+
 #[derive(Deserialize)]
 pub enum RecipeCategoryTypes {
     #[serde(rename = "equipment")]
@@ -315,6 +337,7 @@ pub(crate) fn build() -> TokenStream {
 
     let mut crafting_recipes = Vec::new();
     let mut cooking_recipes = Vec::new();
+    let mut stonecutting_recipes = Vec::new();
 
     for recipe in recipes_assets {
         match recipe {
@@ -368,7 +391,9 @@ pub(crate) fn build() -> TokenStream {
                 };
                 cooking_recipes.push(smoking_token);
             }
-            RecipeTypes::Stonecutting => {}
+            RecipeTypes::Stonecutting(recipe) => {
+                stonecutting_recipes.push(recipe.to_token_stream());
+            }
             RecipeTypes::CraftingSpecial => {}
         }
     }
@@ -465,7 +490,12 @@ pub(crate) fn build() -> TokenStream {
             }
         }
 
-
+        #[allow(dead_code)]
+        #[derive(Clone, Debug)]
+        pub struct StonecuttingRecipe {
+            ingredient: RecipeIngredientTypes,
+            result: RecipeResultStruct,
+        }
 
         #[derive(Clone, Debug)]
         pub struct RecipeResultStruct {
@@ -513,6 +543,9 @@ pub(crate) fn build() -> TokenStream {
         ];
         pub static RECIPES_COOKING: &[CookingRecipeType] = &[
             #(#cooking_recipes ),*
+        ];
+        pub static RECIPES_STONECUTTING: &[StonecuttingRecipe] = &[
+            #(#stonecutting_recipes ),*
         ];
 
         pub fn get_cooking_recipe_with_ingredient(ingredient: &Item, recipe_type: CookingRecipeKind) -> Option<&'static CookingRecipe> {
