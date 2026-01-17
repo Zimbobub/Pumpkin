@@ -1,7 +1,7 @@
 use crate::block::registry::BlockActionResult;
 use crate::block::{BlockBehaviour, BlockFuture, NormalUseArgs};
 
-use pumpkin_inventory::crafting::crafting_screen_handler::CraftingTableScreenHandler;
+use pumpkin_inventory::workstation::crafting_table_screen_handler::CraftingTableScreenHandler;
 use pumpkin_inventory::player::player_inventory::PlayerInventory;
 use pumpkin_inventory::screen_handler::{
     BoxFuture, InventoryPlayer, ScreenHandlerFactory, SharedScreenHandler,

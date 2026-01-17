@@ -31,6 +31,7 @@ use tokio::sync::Mutex;
 pub struct ResultSlot {
     pub inventory: Arc<dyn RecipeInputInventory>,
     pub id: AtomicU8,
+    pub crafting_type: 
     pub result: Arc<Mutex<ItemStack>>,
     recipe_cache: AtomicCell<Option<&'static CraftingRecipeTypes>>,
 }

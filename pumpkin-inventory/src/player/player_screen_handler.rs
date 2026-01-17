@@ -1,7 +1,7 @@
 use super::player_inventory::PlayerInventory;
-use crate::crafting::crafting_inventory::CraftingInventory;
-use crate::crafting::crafting_screen_handler::CraftingScreenHandler;
-use crate::crafting::recipes::{RecipeFinderScreenHandler, RecipeInputInventory};
+use crate::workstation::workstation_inventory::WorkstationInventory;
+use crate::workstation::workstation_screen_handler::CraftingScreenHandler;
+use crate::workstation::recipes::{RecipeFinderScreenHandler, RecipeInputInventory};
 use crate::screen_handler::{
     InventoryPlayer, ItemStackFuture, ScreenHandler, ScreenHandlerBehaviour, ScreenHandlerFuture,
 };
@@ -20,7 +20,7 @@ pub struct PlayerScreenHandler {
 
 impl RecipeFinderScreenHandler for PlayerScreenHandler {}
 
-impl CraftingScreenHandler<CraftingInventory> for PlayerScreenHandler {}
+impl CraftingScreenHandler<WorkstationInventory> for PlayerScreenHandler {}
 
 // TODO: Fully implement this
 impl PlayerScreenHandler {
@@ -45,7 +45,7 @@ impl PlayerScreenHandler {
         sync_id: u8,
     ) -> Self {
         let crafting_inventory: Arc<dyn RecipeInputInventory> =
-            Arc::new(CraftingInventory::new(2, 2));
+            Arc::new(WorkstationInventory::new(2, 2));
 
         let mut player_screen_handler = PlayerScreenHandler {
             behaviour: ScreenHandlerBehaviour::new(sync_id, window_type),
